@@ -67,6 +67,8 @@ const getStatus = userId => {
     });
 };
 
+//You have to use await inside an async function
+
 const getStatusAlt = async userId => {
   //add the async will always return promises
   const user = await getUser(userId);

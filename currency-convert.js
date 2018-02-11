@@ -40,15 +40,30 @@ const convertCurrency = (from, to, amount) => {
 };
 
 const getExchangeRateAlt = async (from, to) => {
-  const response = await axios.get(`https://api.fixer.io/latest?base=${from}`);
-  return response.data.rates[to];
+  try {
+    const response = await axios.get(
+      `https://api.fixer.io/latest?base=${from}`
+    );
+    const rate = response.data.rates[to];
+    if (rate) {
+      return rate;
+    } else {
+      throw new Error();
+    }
+  } catch (e) {
+    throw new Error(`Unable to get the exchange rate for ${from} to ${to}.`);
+  }
 };
 
 const getCountriesAlt = async currencyCode => {
-  const response = await axios.get(
-    `https://restcountries.eu/rest/v2/currency/${currencyCode}`
-  );
-  return response.data.map(country => country.name);
+  try {
+    const response = await axios.get(
+      `https://restcountries.eu/rest/v2/currency/${currencyCode}`
+    );
+    return response.data.map(country => country.name);
+  } catch (e) {
+    throw new Error(`Unabled to get countries that use ${currencyCode}`);
+  }
 };
 
 //create convertCurrencyAlt as a async function
@@ -61,9 +76,13 @@ const convertCurrencyAlt = async (from, to, amount) => {
   )}.`;
 };
 
-convertCurrencyAlt('USD', 'CAD', 100).then(status => {
-  console.log(status);
-});
+convertCurrencyAlt('USD', 'CAD', 100)
+  .then(status => {
+    console.log(status);
+  })
+  .catch(e => {
+    console.log(e.message);
+  });
 
 // getCountries('CAD').then(country => {
 //   console.log(country);
